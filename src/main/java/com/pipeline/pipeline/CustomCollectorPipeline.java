@@ -9,7 +9,7 @@ public class CustomCollectorPipeline {
 
     public void run(List<Order> orders) {
 
-        // ── Sequential run ───────────────────────────────────────────────
+
         System.out.println("--- Running custom collector (sequential) ---");
 
         long seqStart = System.currentTimeMillis();
@@ -24,9 +24,7 @@ public class CustomCollectorPipeline {
         System.out.println("Sequential time : " + seqTime + "ms");
         System.out.println();
 
-        // ── Parallel run ─────────────────────────────────────────────────
-        // The combiner() makes this safe — parallel streams split the list,
-        // each thread gets its own Container, combiner merges them at the end
+
         System.out.println("--- Running custom collector (parallel) ---");
 
         long parStart = System.currentTimeMillis();
@@ -40,9 +38,7 @@ public class CustomCollectorPipeline {
         System.out.println("Parallel time   : " + parTime + "ms");
         System.out.println();
 
-        // ── Correctness check ────────────────────────────────────────────
-        // Both runs must produce identical results
-        // If combiner() is wrong, numbers will differ in parallel
+
         System.out.println("--- Correctness check (sequential vs parallel) ---");
 
         boolean revenueMatch = Math.abs(

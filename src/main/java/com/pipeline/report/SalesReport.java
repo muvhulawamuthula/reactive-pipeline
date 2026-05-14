@@ -19,14 +19,14 @@ public record SalesReport(
         System.out.println("=== " + pipelineName + " ===");
         System.out.println();
 
-        // Lazy evaluation proof
+
         System.out.println("--- Pipeline stage counters (proves lazy evaluation) ---");
         System.out.println("1. Entered pipeline  : " + totalSeen);
         System.out.println("2. Passed filter     : " + afterFilter);
         System.out.println("3. Passed map        : " + afterMap);
         System.out.println();
 
-        // Revenue breakdown
+
         System.out.printf("Total revenue        : £%,.2f%n", totalRevenue());
         System.out.println();
         System.out.println("Revenue by category (sorted):");

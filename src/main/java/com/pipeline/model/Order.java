@@ -11,7 +11,7 @@ public record Order(
         List<LineItem> lineItems,
         boolean cancelled
 ) {
-    // Total order value after customer tier discount
+
     public double totalValue() {
         double gross = lineItems.stream()
                 .mapToDouble(LineItem::totalPrice)
@@ -19,14 +19,14 @@ public record Order(
         return gross * (1 - customerTier.discount);
     }
 
-    // Total number of items across all line items
+
     public int totalQuantity() {
         return lineItems.stream()
                 .mapToInt(LineItem::quantity)
                 .sum();
     }
 
-    // Primary category — category of the highest-value line item
+
     public String primaryCategory() {
         return lineItems.stream()
                 .max(java.util.Comparator.comparingDouble(LineItem::totalPrice))

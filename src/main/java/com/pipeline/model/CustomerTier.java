@@ -6,7 +6,7 @@ public enum CustomerTier {
     GOLD(0.10),
     PLATINUM(0.15);
 
-    // Discount applied to all orders from this tier
+
     public final double discount;
 
     CustomerTier(double discount) {

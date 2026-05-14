@@ -16,13 +16,13 @@ public class ParallelPipeline {
                 Runtime.getRuntime().availableProcessors());
         System.out.println();
 
-        // Warmup
+
         for (int i = 0; i < 3; i++) {
             runSequential(orders);
             runParallel(orders);
         }
 
-        // Measured runs — average of 5
+
         int runs = 5;
         long seqTotal = 0;
         long parTotal = 0;
@@ -42,11 +42,11 @@ public class ParallelPipeline {
         System.out.printf("Speedup     : %.2f×%n", speedup);
         System.out.println();
 
-        // ── Safe vs unsafe parallel operations ──────────────────────────
+
         System.out.println("--- Parallel safety checks ---");
         System.out.println();
 
-        // SAFE — stateless, no shared mutable state
+
         System.out.println("✓ filter + map + collect  — stateless, safe");
         long safeCount = orders.parallelStream()
                 .filter(o -> !o.cancelled())
@@ -56,7 +56,7 @@ public class ParallelPipeline {
         System.out.println("  Distinct categories : " + safeCount);
         System.out.println();
 
-        // SAFE — reduction with associative operator
+
         System.out.println("✓ reduce with associative operator — safe");
         double totalRevenue = orders.parallelStream()
                 .filter(o -> !o.cancelled())
@@ -65,15 +65,13 @@ public class ParallelPipeline {
         System.out.printf("  Total revenue : £%,.2f%n", totalRevenue);
         System.out.println();
 
-        // UNSAFE — shared mutable state without synchronisation
-        // This is the classic parallel stream mistake
         System.out.println("✗ Shared mutable state — UNSAFE (demonstrates the bug)");
         List<String> unsafeList = new java.util.ArrayList<>();
         try {
             orders.parallelStream()
                     .filter(o -> !o.cancelled())
                     .map(Order::orderId)
-                    .forEach(unsafeList::add); // ArrayList is not thread-safe
+                    .forEach(unsafeList::add);
             System.out.println("  Collected : " + unsafeList.size() +
                     " (may differ from " + orders.stream()
                     .filter(o -> !o.cancelled()).count() +
@@ -84,7 +82,7 @@ public class ParallelPipeline {
         }
         System.out.println();
 
-        // SAFE fix for the above
+
         System.out.println("✓ Collect to list safely — use toList() not forEach+add");
         List<String> safeList = orders.parallelStream()
                 .filter(o -> !o.cancelled())
@@ -93,9 +91,7 @@ public class ParallelPipeline {
         System.out.println("  Collected : " + safeList.size() + " (always correct)");
         System.out.println();
 
-        // ── Custom thread pool ───────────────────────────────────────────
-        // parallelStream() uses the common ForkJoinPool (shared across JVM)
-        // For isolation, use a custom pool
+
         System.out.println("--- Custom ForkJoinPool (isolated thread count) ---");
 
         int[] parallelismLevels = {1, 2, 4, 8};
@@ -125,7 +121,7 @@ public class ParallelPipeline {
         }
         System.out.println();
 
-        // ── When parallel hurts ──────────────────────────────────────────
+
         System.out.println("--- When parallel hurts (small data) ---");
 
         List<Order> smallList = orders.subList(0, 100);

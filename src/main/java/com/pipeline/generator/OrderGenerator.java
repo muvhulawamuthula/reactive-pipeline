@@ -55,7 +55,7 @@ public class OrderGenerator {
 
         LocalDate date = baseDate.plusDays(random.nextInt(365));
 
-        // Generate 1-4 line items per order
+
         int lineItemCount = 1 + random.nextInt(4);
         List<LineItem> lineItems = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class OrderGenerator {
                     quantity, Math.round(price * 100.0) / 100.0));
         }
 
-        // 12% of orders are cancelled
+
         boolean cancelled = random.nextDouble() < 0.12;
 
         return new Order(orderId, customerId, tier, date, lineItems, cancelled);

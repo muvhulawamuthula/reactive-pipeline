@@ -13,10 +13,7 @@ import java.util.stream.Collector;
 public class RevenueCollector
         implements Collector<Order, RevenueCollector.Container, RevenueCollector.Result> {
 
-    // ── The mutable accumulation container ──────────────────────────────
-    // This is what gets built up as elements flow through the stream.
-    // It must be mutable — that's the whole point.
-    // ────────────────────────────────────────────────────────────────────
+
     public static class Container {
         double totalRevenue     = 0.0;
         long   totalOrders      = 0;
@@ -26,7 +23,7 @@ public class RevenueCollector
         Map<CustomerTier, Double> revenueByTier     = new HashMap<>();
         Map<CustomerTier, Long>   countByTier       = new HashMap<>();
 
-        // Fold one order into this container
+
         void accumulate(Order order) {
             double value = order.totalValue();
 
@@ -43,7 +40,7 @@ public class RevenueCollector
             countByTier.merge(order.customerTier(), 1L, Long::sum);
         }
 
-        // Merge another container into this one (used by parallel streams)
+
         void combine(Container other) {
             totalRevenue += other.totalRevenue;
             totalOrders  += other.totalOrders;
@@ -62,10 +59,7 @@ public class RevenueCollector
         }
     }
 
-    // ── The final immutable result ───────────────────────────────────────
-    // Produced by finisher() from the container.
-    // Immutable — safe to share across threads.
-    // ────────────────────────────────────────────────────────────────────
+
     public record Result(
             double totalRevenue,
             long   totalOrders,
@@ -110,22 +104,19 @@ public class RevenueCollector
         }
     }
 
-    // ── The five Collector methods ───────────────────────────────────────
 
-    // 1. supplier — called once to create the empty container
     @Override
     public Supplier<Container> supplier() {
         return Container::new;
     }
 
-    // 2. accumulator — called once per element to fold it into the container
+
     @Override
     public BiConsumer<Container, Order> accumulator() {
         return Container::accumulate;
     }
 
-    // 3. combiner — called to merge two containers in parallel streams
-    // Must be associative: combine(A,B) must equal combine(B,A) in effect
+
     @Override
     public BinaryOperator<Container> combiner() {
         return (left, right) -> {
@@ -134,12 +125,11 @@ public class RevenueCollector
         };
     }
 
-    // 4. finisher — transforms the mutable container into the final result
-    // This is where we do any final computation (averages, sorting, etc.)
+
     @Override
     public Function<Container, Result> finisher() {
         return container -> {
-            // Find top category
+
             Optional<Map.Entry<String, Double>> topCat = container
                     .revenueByCategory.entrySet().stream()
                     .max(Comparator.comparingDouble(Map.Entry::getValue));
@@ -162,10 +152,7 @@ public class RevenueCollector
         };
     }
 
-    // 5. characteristics — hints to the stream engine
-    // UNORDERED  → result doesn't depend on encounter order (safe for parallel)
-    // No CONCURRENT → we don't support concurrent access to the container
-    // No IDENTITY_FINISH → finisher is not the identity function (we transform)
+
     @Override
     public Set<Characteristics> characteristics() {
         return Set.of(Characteristics.UNORDERED);

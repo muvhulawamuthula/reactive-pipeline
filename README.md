@@ -349,4 +349,5 @@ Building these pipelines end to end means you can discuss every concept with cod
 
 ## License
 
-MIT
+
+MIT. See [LICENSE](LICENSE).
